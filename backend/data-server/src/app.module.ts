@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import mongodbConfig from './common/config/mongodb.config';
 import swaggerConfig from './common/config/swagger.config';
 import aiAgentConfig from './common/config/ai-agent.config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -23,8 +22,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       }),
       inject: [ConfigService],
     }),
+    HealthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
