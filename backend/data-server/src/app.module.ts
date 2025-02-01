@@ -5,6 +5,7 @@ import swaggerConfig from './common/config/swagger.config';
 import aiAgentConfig from './common/config/ai-agent.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HealthModule } from './health/health.module';
+import { MarketModule } from './market/market.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { HealthModule } from './health/health.module';
       }),
       inject: [ConfigService],
     }),
+    MarketModule,
     HealthModule,
   ],
 })
