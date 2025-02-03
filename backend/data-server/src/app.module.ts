@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { EmbeddingModule } from './embedding/embedding.module';
+import { MindShareModule } from './mind-share/mind-share.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { EmbeddingModule } from './embedding/embedding.module';
       }),
       inject: [ConfigService],
     }),
+    MindShareModule,
     MarketModule,
     EmbeddingModule,
     HealthModule,
