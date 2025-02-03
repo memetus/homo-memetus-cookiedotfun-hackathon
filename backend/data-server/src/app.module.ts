@@ -28,8 +28,8 @@ import { EmbeddingModule } from './embedding/embedding.module';
       inject: [ConfigService],
     }),
     MarketModule,
-    HealthModule,
     EmbeddingModule,
+    HealthModule,
   ],
   providers: [
     Logger,
