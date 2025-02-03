@@ -9,6 +9,7 @@ import { MarketModule } from './market/market.module';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { EmbeddingModule } from './embedding/embedding.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
     }),
     MarketModule,
     HealthModule,
+    EmbeddingModule,
   ],
   providers: [
     Logger,
