@@ -8,9 +8,28 @@ import {
   SwaggerModule,
 } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({
+      transports: [
+        new winston.transports.Console({
+          level: process.env.STAGE === 'prod' ? 'info' : 'debug',
+          format: winston.format.combine(
+            winston.format.timestamp({
+              format: 'YYYY-MM-DD HH:mm:ss',
+            }),
+            winston.format.printf(({ timestamp, level, message }) => {
+              const colorize = winston.format.colorize();
+              return `${colorize.colorize(level, `${timestamp} ${level}:`)} ${message}`;
+            }),
+          ),
+        }),
+      ],
+    }),
+  });
 
   const configService = app.get(ConfigService);
 

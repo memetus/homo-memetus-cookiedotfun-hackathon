@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import mongodbConfig from './common/config/mongodb.config';
 import swaggerConfig from './common/config/swagger.config';
@@ -6,6 +6,9 @@ import aiAgentConfig from './common/config/ai-agent.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { HealthModule } from './health/health.module';
 import { MarketModule } from './market/market.module';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter';
+import { APP_FILTER } from '@nestjs/core';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -26,5 +29,16 @@ import { MarketModule } from './market/market.module';
     MarketModule,
     HealthModule,
   ],
+  providers: [
+    Logger,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
