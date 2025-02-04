@@ -1,11 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import 'mongoose-long';
-
-// Long 타입 가져오기
-const {
-  Types: { Long },
-} = mongoose;
 
 export type CoinPriceDocument = CoinPrice & mongoose.Document;
 

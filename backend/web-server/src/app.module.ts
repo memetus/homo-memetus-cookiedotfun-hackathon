@@ -39,9 +39,9 @@ import aiAgentConfig from './common/config/ai-agent.config';
       inject: [ConfigService],
     }),
     UsersModule,
-    HealthModule,
-    PromptGptModule,
     AgentDataModule,
+    PromptGptModule,
+    HealthModule,
   ],
   providers: [
     Logger,
