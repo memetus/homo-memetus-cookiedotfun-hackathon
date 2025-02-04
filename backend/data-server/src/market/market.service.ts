@@ -18,6 +18,7 @@ export class MarketService {
 
     @InjectModel('CoinPrice')
     private coinPriceModel: Model<CoinPrice>,
+
     private configService: ConfigService,
   ) {
     this.coinGeckoBaseUrl = CONSTANTS.coinGeckoUrl;
