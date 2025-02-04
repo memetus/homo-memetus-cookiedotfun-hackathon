@@ -51,10 +51,8 @@ export class MindShareService {
     }
   }
 
-  async getAgentByContract(
-    contractAddress: string,
-    interval: string = '_3Days',
-  ) {
+  async getAgentByContract(contractAddress: string) {
+    const interval: string = '_3Days';
     try {
       const response = await this.apiClient.get(
         `/agents/contractAddress/${contractAddress}`,

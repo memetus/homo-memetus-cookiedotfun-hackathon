@@ -13,10 +13,7 @@ export class MindShareController {
   }
 
   @Get('agents/contract/:contractAddress')
-  async getAgentByContract(
-    @Param('contractAddress') contractAddress: string,
-    @Query('interval') interval: string = '_3Days',
-  ) {
-    return this.mindShareService.getAgentByContract(contractAddress, interval);
+  async getAgentByContract(@Param('contractAddress') contractAddress: string) {
+    return this.mindShareService.getAgentByContract(contractAddress);
   }
 }
