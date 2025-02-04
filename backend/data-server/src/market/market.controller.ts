@@ -7,6 +7,11 @@ import { ApiTags } from '@nestjs/swagger';
 export class MarketController {
   constructor(private readonly marketService: MarketService) {}
 
+  @Get('price-embedding')
+  setPriceEmbedding() {
+    return this.marketService.setPriceEmbedding();
+  }
+
   @Get('coin-gecko-test')
   getDataTest() {
     return this.marketService.getDataTest();
