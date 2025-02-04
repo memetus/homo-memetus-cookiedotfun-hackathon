@@ -9,9 +9,9 @@ import { APP_FILTER } from '@nestjs/core';
 import { HealthModule } from './health/health.module';
 import sentryConfig from './common/config/sentry.config';
 import jwtConfig from './common/config/jwt.config';
-import s3Config from './common/config/s3.config';
 import chainConfig from './common/config/chain.config';
 import { UsersModule } from './users/users.module';
+import { PromptGptModule } from './prompt-gpt/prompt-gpt.module';
 import aiAgentConfig from './common/config/ai-agent.config';
 
 @Module({
@@ -24,7 +24,6 @@ import aiAgentConfig from './common/config/ai-agent.config';
         swaggerConfig,
         sentryConfig,
         jwtConfig,
-        s3Config,
         chainConfig,
         aiAgentConfig,
       ],
@@ -40,6 +39,7 @@ import aiAgentConfig from './common/config/ai-agent.config';
     }),
     UsersModule,
     HealthModule,
+    PromptGptModule,
   ],
   providers: [
     Logger,
