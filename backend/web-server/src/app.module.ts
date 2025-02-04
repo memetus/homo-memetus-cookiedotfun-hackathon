@@ -12,6 +12,7 @@ import jwtConfig from './common/config/jwt.config';
 import chainConfig from './common/config/chain.config';
 import { UsersModule } from './users/users.module';
 import { PromptGptModule } from './prompt-gpt/prompt-gpt.module';
+import { AgentDataModule } from './agent-data/agent-data.module';
 import aiAgentConfig from './common/config/ai-agent.config';
 
 @Module({
@@ -40,6 +41,7 @@ import aiAgentConfig from './common/config/ai-agent.config';
     UsersModule,
     HealthModule,
     PromptGptModule,
+    AgentDataModule,
   ],
   providers: [
     Logger,
