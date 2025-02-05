@@ -3,7 +3,7 @@ import * as mongoose from 'mongoose';
 
 export type CoinDataDocument = CoinData & mongoose.Document;
 
-@Schema({ timestamps: true, versionKey: '_v' })
+@Schema()
 export class CoinData {
   @Prop()
   name: string;
@@ -12,15 +12,27 @@ export class CoinData {
   symbol: string;
 
   @Prop()
+  slug: string;
+
+  @Prop()
   address: string;
 
   @Prop()
   category: string[];
 
   @Prop()
-  marketCap: number;
+  description: string;
 
-  @Prop({ type: [Number] }) // 임베딩 벡터를 저장할 배열 필드 추가
+  @Prop()
+  links: string[];
+
+  @Prop({ type: Object })
+  twitter: {
+    official: string;
+    operater: string;
+  };
+
+  @Prop({ type: [Number] })
   embedding?: number[];
 }
 

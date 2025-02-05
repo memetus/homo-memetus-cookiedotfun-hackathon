@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-
 export type CoinPriceDocument = CoinPrice & mongoose.Document;
 
 @Schema()
@@ -18,10 +17,13 @@ export class CoinPrice {
   address: string;
 
   @Prop()
+  image: string;
+
+  @Prop()
   category: string[];
 
   @Prop()
-  image: string;
+  pageContent: string;
 
   @Prop()
   current_price: number;

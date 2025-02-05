@@ -40,13 +40,23 @@ export class PageReqDto {
   pageSize?: number = 10;
 }
 
-export class GptStrategyIdReqDto {
+export class TokenAddressReqDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
-    example: '677fc00b3fa441d367612545',
-    description: 'gptStrategyId',
+    example: '7Uuzh9JwqF8z3u6MWpQuQJbpD1u46xPDY6PGjwfwTh4o',
+    description: 'meta data by token address',
     required: true,
   })
-  gptStrategyId: string;
+  tokenAddress: string;
+}
+
+export class FundIdReqDto {
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    example: '6791cf58170fb2a83ce97f72',
+    required: true,
+  })
+  fundId: string;
 }
