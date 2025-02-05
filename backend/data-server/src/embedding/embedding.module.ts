@@ -14,5 +14,6 @@ import { CoinPriceSchema } from 'src/common/schema/coin-price.schema';
   ],
   controllers: [EmbeddingController],
   providers: [EmbeddingService],
+  exports: [EmbeddingService],
 })
 export class EmbeddingModule {}
