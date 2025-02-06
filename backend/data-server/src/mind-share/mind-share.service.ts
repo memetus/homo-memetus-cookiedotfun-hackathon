@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cron } from '@nestjs/schedule';
 import axios from 'axios';
 import { Model } from 'mongoose';
 import { MindShare } from 'src/common/schema/mind-share.schema';
@@ -21,6 +22,16 @@ export class MindShareService {
         'x-api-key': this.configService.get<string>('ai-agent.cookieService'),
       },
     });
+  }
+
+  @Cron('10 * * * *')
+  async handleGetAgentsPaged() {
+    try {
+      await this.getAgentsPaged();
+      console.log('Successfully fetched and saved agents data');
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async getAgentsPaged() {
@@ -98,23 +109,37 @@ export class MindShareService {
                 const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
 
                 if (existingAgent) {
-                  await this.mindShareModel.updateOne(
-                    { agentName: agentData.agentName },
-                    {
-                      $set: { ...transformedAgent, updatedAt: new Date() },
-                      $push: {
-                        mindshareHistory: {
-                          mindshare: agentData.mindshare,
-                          timestamp: new Date(),
-                        },
-                      },
-                      $pull: {
-                        mindshareHistory: {
-                          timestamp: { $lt: twoHoursAgo },
-                        },
-                      },
-                    },
+                  const existingHistory = existingAgent.mindshareHistory || [];
+                  const newHistoryEntry = {
+                    mindshare: agentData.mindshare,
+                    timestamp: new Date(),
+                  };
+
+                  // Check if the new entry already exists in the history
+                  const isDuplicate = existingHistory.some(
+                    (entry) =>
+                      entry.mindshare === newHistoryEntry.mindshare &&
+                      entry.timestamp.getTime() ===
+                        newHistoryEntry.timestamp.getTime(),
                   );
+
+                  if (!isDuplicate) {
+                    const updatedHistory = existingHistory.filter(
+                      (entry) => entry.timestamp >= twoHoursAgo,
+                    );
+                    updatedHistory.push(newHistoryEntry);
+
+                    await this.mindShareModel.updateOne(
+                      { agentName: agentData.agentName },
+                      {
+                        $set: {
+                          ...transformedAgent,
+                          updatedAt: new Date(),
+                          mindshareHistory: updatedHistory,
+                        },
+                      },
+                    );
+                  }
                 } else {
                   const newAgent = new this.mindShareModel({
                     ...transformedAgent,
