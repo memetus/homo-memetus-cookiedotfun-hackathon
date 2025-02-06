@@ -11,6 +11,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { EmbeddingModule } from './embedding/embedding.module';
 import { MindShareModule } from './mind-share/mind-share.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MindShareModule } from './mind-share/mind-share.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     MindShareModule,
     MarketModule,
     EmbeddingModule,
