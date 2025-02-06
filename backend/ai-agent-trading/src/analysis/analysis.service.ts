@@ -11,6 +11,7 @@ import { FundData } from 'src/common/schemas/fund-data.schema';
 import { TradingResult } from 'src/common/schemas/trading-result.schema';
 import { MongoDBAtlasVectorSearch } from '@langchain/mongodb';
 import { OpenAIEmbeddings } from '@langchain/openai';
+import { MindShare } from 'src/common/schemas/mind-share.schema';
 
 @Injectable()
 export class AnalysisService {
@@ -26,6 +27,8 @@ export class AnalysisService {
     private fundDataModel: Model<FundData>,
     @InjectModel('TradingResult')
     private tradingResultModel: Model<TradingResult>,
+    @InjectModel('MindShare')
+    private mindShareModel: Model<MindShare>,
 
     private configService: ConfigService,
   ) {
@@ -68,15 +71,8 @@ export class AnalysisService {
 
     // console.log('tradingResultMessage', tradingResultMessage);
 
-    //RAG
-    const result = await this.langChainVectorSearch(query);
-    const resultsArray = [];
-    for await (const doc of result) {
-      resultsArray.push(doc);
-    }
-
-    const resultsArrayString = JSON.stringify(resultsArray, null, 2);
-    // console.log('resultsArrayString', resultsArrayString);
+    const mindShareResult = await this.getPriceByMindshare();
+    const mindShareMessage = JSON.stringify(mindShareResult, null, 2);
 
     const CoinSchema = z.object({
       name: z.string(),
@@ -90,13 +86,6 @@ export class AnalysisService {
     const CoinsResponseSchema = z.object({
       coins: z.array(CoinSchema),
     });
-
-    // 추천하기 적합한 토큰이 없을 경우
-    if (resultsArray.length === 0) {
-      return 'No suitable tokens for recommendation';
-    }
-
-    // console.log(JSON.stringify(resultsArray, null, 2));
 
     // Generate a response based on the search results
     const response = await this.openai.chat.completions.create({
@@ -142,7 +131,7 @@ export class AnalysisService {
           Provide feedback on the performance and make investment decisions based on this analysis.
     
           [DATA SET]
-          ${resultsArrayString}
+          ${mindShareMessage}
           Analyze the coins with the highest expected returns and make investment decisions based on this analysis.
           
           [RESPONSE FORMAT]
@@ -268,5 +257,68 @@ export class AnalysisService {
     }
 
     return fundDataInfo.portfolio;
+  }
+
+  async getMindshareIncreases() {
+    const currentMindshares = await this.mindShareModel.find({});
+
+    const mindshareIncreases = currentMindshares.map((current) => {
+      const sortedHistory = current.mindshareHistory.sort(
+        (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
+      );
+      const pastMindshare = sortedHistory[1]?.mindshare;
+
+      return {
+        agentName: current.agentName,
+        address: current.address,
+        twitterUsernames: current.twitterUsernames,
+        mindshare: current.mindshare,
+        mindshareDeltaPercent: current.mindshareDeltaPercent,
+        marketCap: current.marketCap,
+        marketCapDeltaPercent: current.marketCapDeltaPercent,
+        price: current.price,
+        priceDeltaPercent: current.priceDeltaPercent,
+        liquidity: current.liquidity,
+        volume24Hours: current.volume24Hours,
+        volume24HoursDeltaPercent: current.volume24HoursDeltaPercent,
+        holdersCount: current.holdersCount,
+        holdersCountDeltaPercent: current.holdersCountDeltaPercent,
+        averageImpressionsCount: current.averageImpressionsCount,
+        averageImpressionsCountDeltaPercent:
+          current.averageImpressionsCountDeltaPercent,
+        averageEngagementsCount: current.averageEngagementsCount,
+        averageEngagementsCountDeltaPercent:
+          current.averageEngagementsCountDeltaPercent,
+        followersCount: current.followersCount,
+        smartFollowersCount: current.smartFollowersCount,
+        topTweets: current.topTweets,
+        updatedAt: current.updatedAt,
+        mindshareHistory: current.mindshareHistory,
+        mindshareIncrease: pastMindshare
+          ? current.mindshare - pastMindshare
+          : 0,
+      };
+    });
+
+    mindshareIncreases.sort(
+      (a, b) => b.mindshareIncrease - a.mindshareIncrease,
+    );
+
+    return mindshareIncreases.slice(0, 10);
+  }
+
+  async getPriceByMindshare() {
+    const mindshareIncreases = await this.getMindshareIncreases();
+
+    const coins = await Promise.all(
+      mindshareIncreases.map(async (mindshare) => {
+        const coinPrice = await this.coinPriceModel
+          .findOne({ address: mindshare.address }, { embedding: 0 })
+          .lean();
+        return { ...mindshare, coinPrice };
+      }),
+    );
+
+    return coins;
   }
 }

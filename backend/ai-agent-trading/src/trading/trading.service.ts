@@ -20,7 +20,7 @@ export class TradingService {
     private analysisService: AnalysisService,
   ) {}
 
-  // @Cron('0 * * * *')
+  @Cron('0 * * * *')
   async handleTrading() {
     console.log('Running ai agent trading');
     const fundDataList = await this.fundDataModel.find();

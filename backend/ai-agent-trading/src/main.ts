@@ -67,7 +67,7 @@ async function bootstrap() {
   const port = configService.get('PORT') || 8082;
   await app.listen(port);
   console.log(
-    `AI agent trading simulator server is running on port ${port}, STAGE:${process.env.STAGE}`,
+    `AI agent server is running on port ${port}, STAGE:${process.env.STAGE}`,
   );
 }
 bootstrap();

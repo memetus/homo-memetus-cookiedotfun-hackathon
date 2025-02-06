@@ -23,4 +23,14 @@ export class AnalysisController {
   getPortfolio(@Param() { fundId }: FundIdReqDto) {
     return this.analysisService.getPortfolio(fundId);
   }
+
+  @Get('top-mindshare')
+  getMindshareIncreases() {
+    return this.analysisService.getMindshareIncreases();
+  }
+
+  @Get('price-mindshare')
+  getPriceByMindshare() {
+    return this.analysisService.getPriceByMindshare();
+  }
 }
