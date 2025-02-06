@@ -42,16 +42,16 @@ export class MindShareService {
             },
           });
 
+          if (response.data.ok.data.length === 0) {
+            hasMoreData = false;
+            continue;
+          }
+
           const agents = Array.isArray(response.data?.ok)
             ? response.data?.ok
             : response.data?.ok
               ? [response.data.ok]
               : [];
-
-          if (agents.length === 0) {
-            hasMoreData = false;
-            continue;
-          }
 
           await Promise.all(
             agents.flatMap((agent) =>
@@ -95,13 +95,34 @@ export class MindShareService {
                   agentName: agentData.agentName,
                 });
 
+                const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+
                 if (existingAgent) {
                   await this.mindShareModel.updateOne(
                     { agentName: agentData.agentName },
-                    transformedAgent,
+                    {
+                      $set: { ...transformedAgent, updatedAt: new Date() },
+                      $push: {
+                        mindshareHistory: {
+                          mindshare: agentData.mindshare,
+                          timestamp: new Date(),
+                        },
+                      },
+                      $pull: {
+                        mindshareHistory: {
+                          timestamp: { $lt: twoHoursAgo },
+                        },
+                      },
+                    },
                   );
                 } else {
-                  const newAgent = new this.mindShareModel(transformedAgent);
+                  const newAgent = new this.mindShareModel({
+                    ...transformedAgent,
+                    updatedAt: new Date(),
+                    mindshareHistory: [
+                      { mindshare: agentData.mindshare, timestamp: new Date() },
+                    ],
+                  });
                   await newAgent.save();
                 }
               }),
@@ -147,8 +168,33 @@ export class MindShareService {
     }
   }
 
+  async getTop10MindshareIncreases() {
+    const currentMindshares = await this.mindShareModel.find({});
+
+    const mindshareIncreases = currentMindshares.map((current) => {
+      const sortedHistory = current.mindshareHistory.sort(
+        (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
+      );
+      const pastMindshare = sortedHistory[1]?.mindshare;
+
+      return {
+        agentName: current.agentName,
+        address: current.address,
+        mindshareIncrease: pastMindshare
+          ? current.mindshare - pastMindshare
+          : 0,
+      };
+    });
+
+    mindshareIncreases.sort(
+      (a, b) => b.mindshareIncrease - a.mindshareIncrease,
+    );
+
+    return mindshareIncreases.slice(0, 10);
+  }
+
   async getAgentByContract(contractAddress: string) {
-    const interval: string = '_3Days';
+    const interval: string = '_7Days';
     try {
       const response = await this.apiClient.get(
         `/agents/contractAddress/${contractAddress}`,
@@ -161,15 +207,6 @@ export class MindShareService {
       throw new Error(
         `Failed to fetch agent by contract address: ${error.message}`,
       );
-    }
-  }
-
-  async getAuthorization() {
-    try {
-      const response = await this.apiClient.get('/authorization');
-      return response.data;
-    } catch (error) {
-      throw new Error(`Failed to fetch authorization: ${error.message}`);
     }
   }
 }

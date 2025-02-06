@@ -12,13 +12,13 @@ export class MindShareController {
     return this.mindShareService.getAgentsPaged();
   }
 
+  @Get('mindshare-top10')
+  async getTop10MindshareIncreases() {
+    return this.mindShareService.getTop10MindshareIncreases();
+  }
+
   @Get('agents/contract/:contractAddress')
   async getAgentByContract(@Param('contractAddress') contractAddress: string) {
     return this.mindShareService.getAgentByContract(contractAddress);
-  }
-
-  @Get('authorization')
-  async getAuthorization() {
-    return this.mindShareService.getAuthorization();
   }
 }

@@ -67,6 +67,12 @@ export class MindShare {
 
   @Prop()
   topTweets: string[];
+
+  @Prop()
+  updatedAt: Date;
+
+  @Prop({ type: [{ mindshare: Number, timestamp: Date }] })
+  mindshareHistory: { mindshare: number; timestamp: Date }[];
 }
 
 export const MindShareSchema = SchemaFactory.createForClass(MindShare);
