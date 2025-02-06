@@ -12,6 +12,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { EmbeddingModule } from './embedding/embedding.module';
 import { MindShareModule } from './mind-share/mind-share.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PriceModule } from './price/price.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     }),
     ScheduleModule.forRoot(),
     MindShareModule,
+    PriceModule,
     MarketModule,
     EmbeddingModule,
     HealthModule,
