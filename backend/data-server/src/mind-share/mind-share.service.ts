@@ -42,16 +42,16 @@ export class MindShareService {
             },
           });
 
+          if (response.data.ok.data.length === 0) {
+            hasMoreData = false;
+            continue;
+          }
+
           const agents = Array.isArray(response.data?.ok)
             ? response.data?.ok
             : response.data?.ok
               ? [response.data.ok]
               : [];
-
-          if (agents.length === 0) {
-            hasMoreData = false;
-            continue;
-          }
 
           await Promise.all(
             agents.flatMap((agent) =>
