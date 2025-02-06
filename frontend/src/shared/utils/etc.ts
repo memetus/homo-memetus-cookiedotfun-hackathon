@@ -1,7 +1,7 @@
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   retries: number = 3,
-  delay: number = 1000,
+  delay: number = 1000
 ): Promise<T> {
   let attempt = 0;
   while (attempt < retries) {
@@ -10,7 +10,7 @@ export async function retryWithBackoff<T>(
     } catch (error) {
       if (attempt < retries - 1) {
         await new Promise((resolve) =>
-          setTimeout(resolve, delay * 2 ** attempt),
+          setTimeout(resolve, delay * 2 ** attempt)
         );
       } else {
         throw error;
@@ -18,5 +18,9 @@ export async function retryWithBackoff<T>(
     }
     attempt++;
   }
-  throw new Error('Max retries reached');
+  throw new Error("Max retries reached");
 }
+
+export const getTimezone = () => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+};
