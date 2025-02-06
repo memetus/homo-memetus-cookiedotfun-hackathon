@@ -18,7 +18,7 @@ import { PriceModule } from './price/price.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env`,
+      envFilePath: `.env.${process.env.STAGE}`,
       load: [mongodbConfig, swaggerConfig, aiAgentConfig],
     }),
     MongooseModule.forRootAsync({
