@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TradingResultSchema } from 'src/common/schemas/trading-result.schema';
 import { CoinPriceSchema } from 'src/common/schemas/coin-price.schema';
 import { AnalysisModule } from 'src/analysis/analysis.module';
+import { MindShareSchema } from 'src/common/schemas/mind-share.schema';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AnalysisModule } from 'src/analysis/analysis.module';
       { name: 'TradingResult', schema: TradingResultSchema },
       { name: 'FundData', schema: FundDataSchema },
       { name: 'CoinPrice', schema: CoinPriceSchema },
+      { name: 'MindShare', schema: MindShareSchema },
     ]),
     AnalysisModule,
   ],
