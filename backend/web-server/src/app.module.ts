@@ -12,6 +12,7 @@ import jwtConfig from './common/config/jwt.config';
 import chainConfig from './common/config/chain.config';
 import { UsersModule } from './users/users.module';
 import { AgentDataModule } from './agent-data/agent-data.module';
+import { SendAiModule } from './send-ai/send-ai.module';
 import aiAgentConfig from './common/config/ai-agent.config';
 
 @Module({
@@ -39,6 +40,7 @@ import aiAgentConfig from './common/config/ai-agent.config';
     }),
     UsersModule,
     AgentDataModule,
+    SendAiModule,
     HealthModule,
   ],
   providers: [
