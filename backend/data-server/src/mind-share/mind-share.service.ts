@@ -234,4 +234,26 @@ export class MindShareService {
       );
     }
   }
+
+  async searchTweets(searchQuery: string) {
+    const from = '2025-01-01';
+    const to = '2025-02-13';
+    const apiKey = this.configService.get<string>('ai-agent.cookieService');
+    const url = `https://api.cookie.fun/v1/hackathon/search/${encodeURIComponent(searchQuery)}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: { 'x-api-key': apiKey },
+        params: { from, to },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        throw new Error(
+          `Cookie token utility not found for query: ${searchQuery}`,
+        );
+      }
+      throw new Error(`Failed to fetch cookie token utility: ${error.message}`);
+    }
+  }
 }
