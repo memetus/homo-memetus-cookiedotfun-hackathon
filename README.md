@@ -10,6 +10,12 @@
 
 👉🏻 [Article - Leveraging DeepSeek for $HOMO's COOKIE DeFAI Hackathon Architecture](https://x.com/cto_memetus/status/1883926659067453926 "Leveraging DeepSeek for $HOMO's  COOKIE DeFAI Hackathon Architecture")
 
+### Detail
+
+**FE documentation**
+[HOMO MEMETUS FE DOCS](https://github.com/memetus/homo-memetus-cookiedotfun-hackathon/tree/main/frontend)
+[HOMO MEMETUS BE DOCS](https://github.com/memetus/homo-memetus-cookiedotfun-hackathon/blob/main/backend/web-server/README.md)
+
 ### Demo User Flow
 
 1. Connect wallet to start. You can go directly to the Dashboard by clicking 'Go To Dashboard' to see trading agents running.
