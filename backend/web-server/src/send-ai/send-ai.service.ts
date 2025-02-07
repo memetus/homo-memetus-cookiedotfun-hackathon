@@ -8,16 +8,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FundData } from 'src/common/schemas/fund-data.schema';
 import { ConfigService } from '@nestjs/config';
+import { Users } from 'src/common/schemas/users.schema';
 
 @Injectable()
 export class SendAiService {
   constructor(
     @InjectModel('FundData')
     private fundDataModel: Model<FundData>,
+    @InjectModel('Users')
+    private usersModel: Model<Users>,
     private configService: ConfigService,
   ) {}
 
-  async createFund(createFundDto: any) {
+  async createFund(createFundDto: any, userId: string) {
+    const userInfo = await this.usersModel.findById(userId);
+
     const name = createFundDto.symbol;
     const symbol = createFundDto.symbol;
 
@@ -25,6 +30,7 @@ export class SendAiService {
 
     const newFundData = {
       ...createFundDto,
+      userWallet: userInfo.wallet,
       balance: 100,
       initialBalance: 100,
       name: createFundDto.symbol,
@@ -111,5 +117,17 @@ export class SendAiService {
     );
 
     return result.mint.toString();
+  }
+
+  async getNumberOfCreateByUser(userId: string) {
+    const userInfo = await this.usersModel.findById(userId);
+
+    const createdNumber = await this.fundDataModel.countDocuments({
+      userWallet: userInfo.wallet,
+    });
+
+    return {
+      createdNumber: createdNumber,
+    };
   }
 }
