@@ -54,7 +54,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Home Memetus web-server API')
+    .setTitle('cookie Hackathon web-server API')
     .setDescription('API description')
     .setVersion('0.0.1')
     .addBearerAuth()
@@ -74,7 +74,7 @@ async function bootstrap() {
   const port = configService.get('PORT') || 8080;
   await app.listen(port);
   console.log(
-    `booster-webserver is running on port ${port}, STAGE:${process.env.STAGE}`,
+    `cookie-webserver is running on port ${port}, STAGE:${process.env.STAGE}`,
   );
 }
 bootstrap();
