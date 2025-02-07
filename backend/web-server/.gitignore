@@ -41,6 +41,7 @@ lerna-debug.log*
 .env.local
 .env.dev
 .env.prod
+ecosystem.config.js
 
 
 # temp directory
