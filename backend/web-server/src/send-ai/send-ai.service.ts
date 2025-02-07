@@ -92,6 +92,34 @@ export class SendAiService {
   }
 
   async deployAgentToken(name: string, symbol: string) {
+    const agent = new SolanaAgentKit(
+      this.configService.get<string>('ai-agent.solanaKey'),
+      this.configService.get<string>('ai-agent.rpcUrl'),
+      {
+        OPENAI_API_KEY: this.configService.get<string>('ai-agent.openai'),
+      },
+    );
+
+    const tokenMetadata = {
+      name,
+      symbol,
+      uri: '',
+      decimals: 9,
+      initialSupply: 100_000_000,
+    };
+
+    const tokenA = await agent.deployToken(
+      tokenMetadata.name,
+      tokenMetadata.uri,
+      tokenMetadata.symbol,
+      tokenMetadata.decimals,
+      tokenMetadata.initialSupply,
+    );
+
+    return tokenA;
+  }
+
+  async deployTokenAndAMM(name: string, symbol: string) {
     // const agent = await this.initializeAgent();
 
     const agent = new SolanaAgentKit(
@@ -124,17 +152,53 @@ export class SendAiService {
       'So11111111111111111111111111111111111111112',
     );
 
-    // 3. Raydium AMM 풀 생성
-    const result = await agent.raydiumCreateAmmV4(
+    // 시장 생성 및 AMM 풀 생성 함수 호출
+    const result = await this.createMarketAndAmmPool(
+      agent,
       tokenAPublicKey,
-      new BN('1000000000'), // baseAmount
-      new BN('1000000000'), // quoteAmount
-      new BN('0'), // slippage
+      solPublicKey,
     );
 
-    console.log('Raydium AMM Pool Created:', result);
+    return {
+      createToken: tokenA,
+      createMarket: result.marketSignatures,
+      createAmm: result.signature,
+    };
+  }
 
-    return tokenA;
+  async createMarketAndAmmPool(
+    agent: any,
+    tokenAPublicKey: PublicKey,
+    solPublicKey: PublicKey,
+  ) {
+    // 시장 생성
+    const marketSignatures = await agent.openbookCreateMarket(
+      tokenAPublicKey, // Base token
+      solPublicKey, // Quote token
+      1, // Lot size
+      0.01, // Tick size
+    );
+
+    const marketId = new PublicKey(marketSignatures[0]);
+
+    // AMM 풀 생성
+    const baseAmount = '1000000000';
+    const quoteAmount = '1000000000';
+    const startTime = '0';
+
+    const signature = await agent.raydiumCreateAmmV4(
+      marketId,
+      new BN(baseAmount),
+      new BN(quoteAmount),
+      new BN(startTime),
+    );
+
+    console.log('Raydium AMM Pool Created:', signature);
+
+    return {
+      marketSignatures,
+      signature,
+    };
   }
 
   async getNumberOfCreateByUser(userId: string) {
