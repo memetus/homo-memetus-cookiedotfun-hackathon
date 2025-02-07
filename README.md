@@ -1,4 +1,4 @@
-# homo-memetus-cookiedotfun-hackathon
+# Homo-Memetus X Cookiedotfun DEFAI Hackathon
 
 > This is Homo Memetus X Cookiedotfun DEFAI Hackathon submission repository
 
