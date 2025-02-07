@@ -80,6 +80,7 @@ export class AgentDataService {
     return {
       fundId: fundDataInfo._id,
       name: fundDataInfo.name,
+      address: fundDataInfo.address,
       strategy: fundDataInfo.strategyPrompt,
       fundAmount: fundDataInfo.initialBalance,
       createdAt: fundDataInfo.createdAt,
