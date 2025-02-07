@@ -12,8 +12,10 @@
 
 ### Detail
 
-**FE documentation**
+**FE DOCUMENTATION**
 [HOMO MEMETUS FE DOCS](https://github.com/memetus/homo-memetus-cookiedotfun-hackathon/tree/main/frontend)
+
+**BE DOCUMENTATION**
 [HOMO MEMETUS BE DOCS](https://github.com/memetus/homo-memetus-cookiedotfun-hackathon/blob/main/backend/web-server/README.md)
 
 ### Demo User Flow
