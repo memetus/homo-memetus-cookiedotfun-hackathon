@@ -4,26 +4,26 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from 'react';
-import styles from '@/components/common/board/conversationBoard/ConversationBoard.module.scss';
-import classNames from 'classnames/bind';
-import { useConversation } from '@/states/partial/conversation/ConversationContext';
-import { ConversationType } from '@/shared/types/data/conversation.type';
-import ConversationCard from '@/components/common/card/conversationCard';
+} from "react";
+import styles from "@/components/common/board/conversationBoard/ConversationBoard.module.scss";
+import classNames from "classnames/bind";
+import { useConversation } from "@/states/partial/conversation/ConversationContext";
+import { ConversationType } from "@/shared/types/data/conversation.type";
+import ConversationCard from "@/components/common/card/conversationCard";
 import {
   promptAgentExhausted,
   promptAgentIntroduce,
-} from '@/shared/constants/agent';
-import TokenResultCard from '@/components/common/card/tokenResultCard';
-import LoadingChatCard from '../../card/loadingChatCard';
-import { useDispatch } from 'react-redux';
-import { SET_TOAST } from '@/states/global/slice/toast';
-import { getUsedCount, updateUseCount } from '@/shared/api/strategy/api';
-import { useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEY } from '@/shared/constants/api';
-import { getCookie } from 'cookies-next';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter } from 'next/navigation';
+} from "@/shared/constants/agent";
+import TokenResultCard from "@/components/common/card/tokenResultCard";
+import LoadingChatCard from "../../card/loadingChatCard";
+import { useDispatch } from "react-redux";
+import { SET_TOAST } from "@/states/global/slice/toast";
+import { getUsedCount, updateUseCount } from "@/shared/api/strategy/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEY } from "@/shared/constants/api";
+import { getCookie } from "cookies-next";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useRouter } from "next/navigation";
 
 const cx = classNames.bind(styles);
 
@@ -53,8 +53,8 @@ const ConversationBoard = () => {
   useEffect(() => {
     setLoginLoading(true);
     setTimeout(() => {
-      const accessToken = getCookie('accessToken');
-      getUsedCount(accessToken).then((data) => {
+      const accessToken = getCookie("accessToken");
+      getUsedCount(accessToken?.toString()).then((data) => {
         data && setUseCount(data.userPromptNumber);
         queryClieint.invalidateQueries({
           queryKey: [QUERY_KEY.GET_USED_COUNT, accessToken],
@@ -68,44 +68,44 @@ const ConversationBoard = () => {
 
   const handleCount = useCallback(async () => {
     if (useCount === undefined || useCount >= 5) {
-      setStatus('start');
+      setStatus("start");
       dispatch(
         SET_TOAST({
-          type: 'strategy-fail',
+          type: "strategy-fail",
           canClose: true,
           autoClose: {
             duration: 5000,
           },
-        }),
+        })
       );
     } else {
       await updateUseCount();
       queryClieint.invalidateQueries({ queryKey: [QUERY_KEY.GET_USED_COUNT] });
-      setStatus('processing');
+      setStatus("processing");
     }
   }, [status, useCount, dispatch]);
 
   const start = useMemo(() => {
-    if (status !== 'start') {
+    if (status !== "start") {
       return undefined;
     }
     return {
-      name: 'start' as const,
+      name: "start" as const,
       onClick: () => handleCount(),
     };
   }, [status, conversations, useCount]);
 
   const handleRestart = useCallback(async () => {
     if (useCount === undefined || useCount >= 5) {
-      setStatus('end');
+      setStatus("end");
       dispatch(
         SET_TOAST({
-          type: 'strategy-fail',
+          type: "strategy-fail",
           canClose: true,
           autoClose: {
             duration: 5000,
           },
-        }),
+        })
       );
     } else {
       await updateUseCount();
@@ -114,35 +114,35 @@ const ConversationBoard = () => {
       });
       setLastMessage(null);
       setConversations([]);
-      setInput('');
-      setStatus('processing');
+      setInput("");
+      setStatus("processing");
       setTokenResult(null);
     }
   }, [useCount, dispatch, conversations, lastMessage, status]);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [isLoading, tokenGenerating]);
 
   return (
-    <div className={cx('board-container')} ref={scrollRef}>
-      {status !== 'processing' && loginLoading ? null : status !==
-          'processing' &&
+    <div className={cx("board-container")} ref={scrollRef}>
+      {status !== "processing" && loginLoading ? null : status !==
+          "processing" &&
         (useCount === undefined || useCount >= 5) ? (
-        <div className={cx('item-wrapper')}>
+        <div className={cx("item-wrapper")}>
           <ConversationCard
-            type={'assistant'}
+            type={"assistant"}
             content={promptAgentExhausted}
             handler={{
-              name: 'strategy',
-              onClick: () => router.push('/strategy'),
+              name: "strategy",
+              onClick: () => router.push("/strategy"),
             }}
           />
         </div>
       ) : (
-        <div className={cx('item-wrapper')}>
+        <div className={cx("item-wrapper")}>
           <ConversationCard
-            type={'assistant'}
+            type={"assistant"}
             content={promptAgentIntroduce}
             handler={start}
           />
@@ -150,7 +150,7 @@ const ConversationBoard = () => {
       )}
       {conversations.map((conversation: ConversationType, index: number) => {
         return (
-          <div key={index} className={cx('item-wrapper')}>
+          <div key={index} className={cx("item-wrapper")}>
             <ConversationCard
               type={conversation.type}
               content={conversation.content}
@@ -160,7 +160,7 @@ const ConversationBoard = () => {
         );
       })}
       {lastMessage && (
-        <div className={cx('item-wrapper')}>
+        <div className={cx("item-wrapper")}>
           <ConversationCard
             type={lastMessage.type}
             content={lastMessage.content}
@@ -169,16 +169,16 @@ const ConversationBoard = () => {
         </div>
       )}
       {tokenGenerating && (
-        <div className={cx('result-wrapper')}>
+        <div className={cx("result-wrapper")}>
           <LoadingChatCard />
         </div>
       )}
-      {tokenResult && status === 'end' && (
-        <div className={cx('result-wrapper')}>
+      {tokenResult && status === "end" && (
+        <div className={cx("result-wrapper")}>
           <TokenResultCard
             coins={tokenResult.coins}
             handler={{
-              name: 'restart',
+              name: "restart",
               onClick: async () => handleRestart(),
             }}
           />

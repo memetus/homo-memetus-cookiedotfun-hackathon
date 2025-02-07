@@ -36,7 +36,7 @@ export const promptAgentTemplate = `
  `;
 
 export const promptAgentIntroduce = `
-   Hello! I'm your dedicated agent for crafting strategies tailored to the world of meme coins. Let's make your meme coin journey both fun and profitable! 🚀
+   Hello! I'm your dedicated agent for crafting strategies tailored to the world of DeFAI. Prompt your trading strategy to tokenize it and create your dedicated agent.
 `;
 
 export const promptAgentExhausted = `
@@ -78,9 +78,9 @@ Your preferred investment term (long-term investing or short-term trading).
 Once you provide this information, I can help you organize your strategy accordingly.`;
 
 export const responseList = [
-  'Here are meme coins based on the conditions you suggested.',
-  'Here are some meme coin recommendations tailored to your requirement.',
-  'Here are some meme coin result according to your request.',
+  "Here are meme coins based on the conditions you suggested.",
+  "Here are some meme coin recommendations tailored to your requirement.",
+  "Here are some meme coin result according to your request.",
 ];
 
 // To recommend a meme coin, the following information about the coin must be understood:

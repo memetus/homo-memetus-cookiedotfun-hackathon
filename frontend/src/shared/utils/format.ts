@@ -4,8 +4,8 @@ export const deepClone = <T>(obj: T): T => {
 
 export function formatDate(date: Date): string {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -13,12 +13,12 @@ export const formatTimestamp = (timestamp: number): string => {
   const date = new Date(timestamp);
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
     2,
-    '0',
-  )}-${String(date.getDate()).padStart(2, '0')} ${String(
-    date.getHours(),
-  ).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(
-    date.getSeconds(),
-  ).padStart(2, '0')}`;
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")} ${String(
+    date.getHours()
+  ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:${String(
+    date.getSeconds()
+  ).padStart(2, "0")}`;
 };
 
 export const formatFileSize = (size: number): string => {
@@ -32,7 +32,7 @@ export const formatFileSize = (size: number): string => {
 export const flattenArray = <T>(arr: any[]): T[] => {
   return arr.reduce<T[]>(
     (acc, val) => acc.concat(Array.isArray(val) ? flattenArray(val) : val),
-    [],
+    []
   );
 };
 
@@ -43,22 +43,19 @@ export const toCamelCase = (str: string): string => {
 export const toSnakeCase = (str: string): string => {
   return str
     .replace(/[A-Z]/g, (char) => `_${char.toLowerCase()}`)
-    .replace(/^_/, '');
+    .replace(/^_/, "");
 };
 
 export const groupBy = <T, K extends keyof T>(
   array: T[],
-  key: K,
+  key: K
 ): Record<string, T[]> => {
-  return array.reduce(
-    (result, currentItem) => {
-      const groupKey = String(currentItem[key]);
-      result[groupKey] = result[groupKey] || [];
-      result[groupKey].push(currentItem);
-      return result;
-    },
-    {} as Record<string, T[]>,
-  );
+  return array.reduce((result, currentItem) => {
+    const groupKey = String(currentItem[key]);
+    result[groupKey] = result[groupKey] || [];
+    result[groupKey].push(currentItem);
+    return result;
+  }, {} as Record<string, T[]>);
 };
 
 export const omit = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
@@ -69,26 +66,23 @@ export const omit = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
 
 export const pick = <T extends object, K extends keyof T>(
   obj: T,
-  keys: K[],
+  keys: K[]
 ): Pick<T, K> => {
-  return keys.reduce(
-    (result, key) => {
-      if (key in obj) {
-        result[key] = obj[key];
-      }
-      return result;
-    },
-    {} as Pick<T, K>,
-  );
+  return keys.reduce((result, key) => {
+    if (key in obj) {
+      result[key] = obj[key];
+    }
+    return result;
+  }, {} as Pick<T, K>);
 };
 
 export const getNestedValue = <T>(
   obj: Record<string, any>,
   path: string,
-  defaultValue?: T,
+  defaultValue?: T
 ): T | undefined => {
-  const result = path.split('.').reduce<any>((acc, key) => {
-    if (acc && typeof acc === 'object' && key in acc) {
+  const result = path.split(".").reduce<any>((acc, key) => {
+    if (acc && typeof acc === "object" && key in acc) {
       return acc[key];
     }
     return undefined;
@@ -111,3 +105,10 @@ export function findDuplicates<T>(array: T[]): T[] {
 
   return Array.from(duplicates);
 }
+
+export const getShortenAddr = (address: string, slice?: number) => {
+  if (slice) {
+    return `${address.slice(0, slice)}...${address.slice(-slice)}`;
+  }
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+};
