@@ -7,12 +7,29 @@ import ConversationBoard from "@/components/common/board/conversationBoard";
 import ConversationInput from "@/components/common/input/conversationInput";
 import ConversationProvider from "@/states/partial/conversation/ConversationProvider";
 import { useWallet } from "@solana/wallet-adapter-react";
-import ConnectButton from "@/components/common/button/connectButton";
+import { useDispatch, useSelector } from "react-redux";
+import { CLOSE_MODAL, getModal, SET_MODAL } from "@/states/global/slice/modal";
+import { RootState } from "@/states/global/store";
+import TokenCreationModal from "@/components/common/modal/tokenCreationModal";
+import { ModalParamManager } from "@/shared/types/ui/modal";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const cx = classNames.bind(styles);
 
 const HomeClient = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const { connected, connecting } = useWallet();
+  const tokenCreationModal = useSelector((state) =>
+    getModal(state as RootState, "tokencreation-modal")
+  );
+
+  useEffect(() => {
+    return () => {
+      dispatch(CLOSE_MODAL({ key: "tokencreation-modal" }));
+    };
+  }, []);
 
   return (
     <div className={cx("client-container")}>
@@ -39,6 +56,23 @@ const HomeClient = () => {
             </p>
           </div>
         </div>
+
+        <div className={cx("button-wrapper")}>
+          {!connected && (
+            <button
+              className={cx("button")}
+              onClick={() => dispatch(SET_MODAL({ key: "wallet-modal" }))}
+            >
+              CONNECT WALLET
+            </button>
+          )}
+          <button
+            className={cx("button")}
+            onClick={() => router.push("/dashboard")}
+          >
+            GO TO DASHBOARD
+          </button>
+        </div>
         {connected && (
           <ConversationProvider>
             <div className={cx("board-wrapper")}>
@@ -50,10 +84,12 @@ const HomeClient = () => {
           </ConversationProvider>
         )}
       </div>
-      {!connected && !connecting && (
-        <div className={cx("connect-button-wrapper")}>
-          <ConnectButton />
-        </div>
+      {tokenCreationModal && (
+        <TokenCreationModal
+          params={
+            tokenCreationModal.params as (typeof ModalParamManager)["tokencreation-modal"]
+          }
+        />
       )}
     </div>
   );

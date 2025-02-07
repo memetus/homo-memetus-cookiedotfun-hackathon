@@ -19,6 +19,7 @@ export type AgentMetadataType = {
   fundAmount: number;
   fundId: string;
   createdAt: string;
+  address: string;
 };
 
 export type AgentStatType = {
@@ -27,4 +28,10 @@ export type AgentStatType = {
   realizedProfit: number;
   unrealizedProfit: number;
   totalPnL: number;
+};
+
+export type CreateAgentParams = {
+  symbol: string;
+  strategyPrompt: string;
+  accessToken: string;
 };

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import styles from "@/components/common/input/conversationInput/ConversationInput.module.scss";
 import classNames from "classnames/bind";
 import SendIcon from "@/public/icon/send-icon.svg";
@@ -16,8 +16,11 @@ const ConversationInput = () => {
     setConversations,
     conversations,
     lastMessage,
+    setStatus,
     setLastMessage,
     status,
+    token,
+    setToken,
   } = useConversation();
 
   useEffect(() => {
@@ -32,10 +35,25 @@ const ConversationInput = () => {
       } else if (inputRef.current) {
         inputRef.current.style.height = `${line * 28}px`;
       }
-      setInput(text);
+      if (status !== "confirm") {
+        setInput(text);
+      } else {
+        setToken(text);
+      }
     },
-    [input, isLoading]
+    [input, token, status, isLoading]
   );
+
+  const _input = useMemo(() => {
+    if (status !== "confirm") return input;
+    return token || "";
+  }, [input, token, status, isLoading]);
+
+  const editable = useMemo(() => {
+    if ((status === "confirm" || status === "processing") && !isLoading)
+      return false;
+    return true;
+  }, [status, isLoading]);
 
   if (status === "end") return null;
 
@@ -44,10 +62,10 @@ const ConversationInput = () => {
       <textarea
         id="conversation-input"
         ref={inputRef}
-        disabled={status !== "processing" || isLoading}
+        disabled={editable}
         className={cx("input")}
         placeholder="Create your investment strategy"
-        value={input}
+        value={_input}
         onChange={(e) => handleInput(e.target.value)}
         onKeyDown={(e) => {
           // if (e.key === 'Enter') {
@@ -72,18 +90,22 @@ const ConversationInput = () => {
       )}
       <button
         className={cx("button")}
-        disabled={status !== "processing" || isLoading}
+        disabled={editable}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          if (input.length > 0) {
-            lastMessage &&
-              setConversations([
-                ...conversations,
-                { ...lastMessage, handler: undefined },
-              ]);
-            setLastMessage({ type: "user", content: input });
-            setInput("");
+          if (status === "confirm" || status === "token") {
+            setStatus("token");
+          } else {
+            if (input.length > 0) {
+              lastMessage &&
+                setConversations([
+                  ...conversations,
+                  { ...lastMessage, handler: undefined },
+                ]);
+              setLastMessage({ type: "user", content: input });
+              setInput("");
+            }
           }
         }}
       >

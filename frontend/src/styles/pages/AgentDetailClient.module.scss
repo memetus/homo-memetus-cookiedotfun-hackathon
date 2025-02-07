@@ -1,4 +1,4 @@
-@import '@/styles/_mixin.scss';
+@import "@/styles/_mixin.scss";
 
 .client-container {
   width: 50%;
@@ -68,6 +68,59 @@
           color: var(--DYNAMIC-OPACITY-7);
           font-size: 1.2rem;
           font-family: var(--FONT-FRAGMENT-MONO);
+        }
+
+        .link-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 1.5rem;
+        }
+
+        .ca-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          position: relative;
+
+          .ca-address {
+            color: var(--DYNAMIC-OPACITY-7);
+            font-size: 1.2rem;
+            font-family: var(--FONT-FRAGMENT-MONO);
+
+            &:hover {
+              cursor: pointer;
+            }
+
+            .copy-button {
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translate(150%, -50%);
+              width: 1.5rem;
+              height: 1.5rem;
+              outline: none;
+              border: none;
+              background-color: transparent;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .copy-button-icon {
+                width: 1.3rem;
+                height: 1.3rem;
+                stroke: var(--DYNAMIC-OPACITY-6);
+                stroke-width: 1;
+              }
+
+              &:hover {
+                .copy-button-icon {
+                  stroke: var(--DYNAMIC-OPACITY-9);
+                }
+              }
+            }
+          }
         }
       }
     }

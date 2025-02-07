@@ -91,8 +91,8 @@ const nextConfig = {
         destination: `${process.env.API_BASE_URL}/prompt-gpt/prompt-number`,
       },
       {
-        source: "/prompt-gpt/count",
-        destination: `${process.env.API_BASE_URL}/prompt-gpt/count`,
+        source: "/api/send-ai/number-of-create-by-user",
+        destination: `${process.env.API_BASE_URL}/send-ai/number-of-create-by-user`,
       },
       {
         source: "/api/cookie",
@@ -173,6 +173,10 @@ const nextConfig = {
           },
         ],
         destination: `${process.env.API_BASE_URL}/agent-data/portfolio/holdings/:id?sort=:sort&sortOrder=:sortOrder&page=:page&pageSize=:pageSize`,
+      },
+      {
+        source: "/api/send-ai/create-fund",
+        destination: `${process.env.API_BASE_URL}/send-ai/create-fund`,
       },
     ];
   },

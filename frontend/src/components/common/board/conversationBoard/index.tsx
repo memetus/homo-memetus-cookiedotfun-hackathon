@@ -10,12 +10,7 @@ import classNames from "classnames/bind";
 import { useConversation } from "@/states/partial/conversation/ConversationContext";
 import { ConversationType } from "@/shared/types/data/conversation.type";
 import ConversationCard from "@/components/common/card/conversationCard";
-import {
-  promptAgentExhausted,
-  promptAgentIntroduce,
-} from "@/shared/constants/agent";
-import TokenResultCard from "@/components/common/card/tokenResultCard";
-import LoadingChatCard from "../../card/loadingChatCard";
+import { promptAgentExhausted } from "@/shared/constants/agent";
 import { useDispatch } from "react-redux";
 import { SET_TOAST } from "@/states/global/slice/toast";
 import { getUsedCount, updateUseCount } from "@/shared/api/strategy/api";
@@ -24,6 +19,10 @@ import { QUERY_KEY } from "@/shared/constants/api";
 import { getCookie } from "cookies-next";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useRouter } from "next/navigation";
+import ConfirmCard from "@/components/common/card/confirmCard";
+import TokenCard from "@/components/common/card/tokenCard";
+import TokenUserCard from "@/components/common/card/tokenUserCard";
+import StartCard from "@/components/common/card/starCard";
 
 const cx = classNames.bind(styles);
 
@@ -31,19 +30,20 @@ const ConversationBoard = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { connected } = useWallet();
+  const [isStart, setIsStart] = useState<boolean>(false);
   const [useCount, setUseCount] = useState<number | undefined>(undefined);
   const {
     conversations,
     lastMessage,
     setStatus,
     status,
-    tokenResult,
+    strategy,
     setConversations,
     setLastMessage,
     setInput,
-    setTokenResult,
     tokenGenerating,
     isLoading,
+    token,
   } = useConversation();
   const [loginLoading, setLoginLoading] = useState<boolean>(true);
 
@@ -55,45 +55,30 @@ const ConversationBoard = () => {
     setTimeout(() => {
       const accessToken = getCookie("accessToken");
       getUsedCount(accessToken?.toString()).then((data) => {
-        data && setUseCount(data.userPromptNumber);
+        data && setUseCount(data.createdNumber);
         queryClieint.invalidateQueries({
           queryKey: [QUERY_KEY.GET_USED_COUNT, accessToken],
         });
+        if (data && data.createdNumber >= 5) {
+          setStatus("end");
+          dispatch(
+            SET_TOAST({
+              type: "strategy-fail",
+              canClose: true,
+              autoClose: {
+                duration: 5000,
+              },
+            })
+          );
+        } else {
+          setStatus("processing");
+        }
       });
       setTimeout(() => {
         setLoginLoading(false);
       }, 500);
     }, 200);
-  }, [connected, status, isLoading]);
-
-  const handleCount = useCallback(async () => {
-    if (useCount === undefined || useCount >= 5) {
-      setStatus("start");
-      dispatch(
-        SET_TOAST({
-          type: "strategy-fail",
-          canClose: true,
-          autoClose: {
-            duration: 5000,
-          },
-        })
-      );
-    } else {
-      await updateUseCount();
-      queryClieint.invalidateQueries({ queryKey: [QUERY_KEY.GET_USED_COUNT] });
-      setStatus("processing");
-    }
-  }, [status, useCount, dispatch]);
-
-  const start = useMemo(() => {
-    if (status !== "start") {
-      return undefined;
-    }
-    return {
-      name: "start" as const,
-      onClick: () => handleCount(),
-    };
-  }, [status, conversations, useCount]);
+  }, [connected, isLoading]);
 
   const handleRestart = useCallback(async () => {
     if (useCount === undefined || useCount >= 5) {
@@ -116,13 +101,12 @@ const ConversationBoard = () => {
       setConversations([]);
       setInput("");
       setStatus("processing");
-      setTokenResult(null);
     }
   }, [useCount, dispatch, conversations, lastMessage, status]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [isLoading, tokenGenerating]);
+  }, [isLoading, tokenGenerating, status]);
 
   return (
     <div className={cx("board-container")} ref={scrollRef}>
@@ -141,11 +125,7 @@ const ConversationBoard = () => {
         </div>
       ) : (
         <div className={cx("item-wrapper")}>
-          <ConversationCard
-            type={"assistant"}
-            content={promptAgentIntroduce}
-            handler={start}
-          />
+          <StartCard />
         </div>
       )}
       {conversations.map((conversation: ConversationType, index: number) => {
@@ -168,20 +148,19 @@ const ConversationBoard = () => {
           />
         </div>
       )}
-      {tokenGenerating && (
+      {(status === "confirm" || status === "token") && (
         <div className={cx("result-wrapper")}>
-          <LoadingChatCard />
+          <ConfirmCard />
         </div>
       )}
-      {tokenResult && status === "end" && (
-        <div className={cx("result-wrapper")}>
-          <TokenResultCard
-            coins={tokenResult.coins}
-            handler={{
-              name: "restart",
-              onClick: async () => handleRestart(),
-            }}
-          />
+      {status === "token" && token && (
+        <div className={cx("item-wrapper")}>
+          <TokenUserCard token={token} />
+        </div>
+      )}
+      {status === "token" && token && strategy && (
+        <div className={cx("item-wrapper")}>
+          <TokenCard token={token} strategy={strategy} />
         </div>
       )}
     </div>

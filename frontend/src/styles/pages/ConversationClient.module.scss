@@ -1,4 +1,4 @@
-@import '@/styles/_mixin.scss';
+@import "@/styles/_mixin.scss";
 
 .client-container {
   width: 100%;
@@ -113,6 +113,28 @@
           }
         }
       }
+    }
+  }
+
+  .button-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 2rem;
+
+    .button {
+      height: 3.2rem;
+      width: 12rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--FONT-TANKER);
+      background-color: var(--DYNAMIC);
+      color: var(--CONSTANT);
+      font-size: 1.3rem;
+      border-radius: 1rem;
     }
   }
 
