@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { SendAiService } from './send-ai.service';
 import { CreateFundDto } from './dto/req.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { User, UserAfterAuth } from 'src/common/decorator/user.decorator';
 
 @ApiTags('Fund')
 @Controller('send-ai')
@@ -10,8 +11,17 @@ export class SendAiController {
 
   @ApiBearerAuth()
   @Post('create-fund')
-  createFund(@Body() createFundDto: CreateFundDto) {
-    return this.sendAiService.createFund(createFundDto);
+  createFund(
+    @Body() createFundDto: CreateFundDto,
+    @User() user: UserAfterAuth,
+  ) {
+    return this.sendAiService.createFund(createFundDto, user.id);
+  }
+
+  @ApiBearerAuth()
+  @Get('number-of-create-by-user')
+  getNumberOfCreateByUser(@User() user: UserAfterAuth) {
+    return this.sendAiService.getNumberOfCreateByUser(user.id);
   }
 
   @ApiBearerAuth()
