@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { MindShareService } from './mind-share.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -20,5 +20,10 @@ export class MindShareController {
   @Get('agents/contract/:contractAddress')
   async getAgentByContract(@Param('contractAddress') contractAddress: string) {
     return this.mindShareService.getAgentByContract(contractAddress);
+  }
+
+  @Get('search/tweets')
+  async searchTweets(@Query('searchQuery') searchQuery: string) {
+    return this.mindShareService.searchTweets(searchQuery);
   }
 }

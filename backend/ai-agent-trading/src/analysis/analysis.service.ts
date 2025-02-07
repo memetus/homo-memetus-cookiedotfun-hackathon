@@ -12,6 +12,7 @@ import { TradingResult } from 'src/common/schemas/trading-result.schema';
 import { MongoDBAtlasVectorSearch } from '@langchain/mongodb';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { MindShare } from 'src/common/schemas/mind-share.schema';
+import axios from 'axios';
 
 @Injectable()
 export class AnalysisService {
@@ -74,6 +75,9 @@ export class AnalysisService {
     const mindShareResult = await this.getPriceByMindshare();
     const mindShareMessage = JSON.stringify(mindShareResult, null, 2);
 
+    const tweets = await this.getTopTweetsForMindShare();
+    const tweetsMessage = JSON.stringify(tweets, null, 2);
+
     const CoinSchema = z.object({
       name: z.string(),
       symbol: z.string(),
@@ -134,6 +138,10 @@ export class AnalysisService {
           ${mindShareMessage}
           Analyze the coins with the highest expected returns and make investment decisions based on this analysis.
           
+          [TWEETS]
+          ${tweetsMessage}
+          Analyze the top tweets for each coin and make investment decisions based on this analysis.,
+        
           [RESPONSE FORMAT]
           1. Market Analysis
             - Quantitative Metrics
@@ -304,7 +312,7 @@ export class AnalysisService {
       (a, b) => b.mindshareIncrease - a.mindshareIncrease,
     );
 
-    return mindshareIncreases.slice(0, 10);
+    return mindshareIncreases.slice(0, 20);
   }
 
   async getPriceByMindshare() {
@@ -320,5 +328,42 @@ export class AnalysisService {
     );
 
     return coins;
+  }
+
+  async searchTweets(searchQuery: string) {
+    const from = '2025-01-01';
+    const to = '2025-02-13';
+    const apiKey = this.configService.get<string>('ai-agent.cookieService');
+    const url = `https://api.cookie.fun/v1/hackathon/search/${encodeURIComponent(searchQuery)}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: { 'x-api-key': apiKey },
+        params: { from, to },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        throw new Error(
+          `Cookie token utility not found for query: ${searchQuery}`,
+        );
+      }
+      throw new Error(`Failed to fetch cookie token utility: ${error.message}`);
+    }
+  }
+
+  async getTopTweetsForMindShare() {
+    const mindShareResult = await this.getMindshareIncreases(); // mindShareResult 배열을 가져오는 메서드
+    const topTweets = [];
+
+    for (const item of mindShareResult) {
+      const tweets = await this.searchTweets(item.agentName);
+      topTweets.push({
+        name: item.agentName,
+        tweets: tweets.slice(0, 5),
+      });
+    }
+
+    return topTweets;
   }
 }
