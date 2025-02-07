@@ -1,6 +1,5 @@
 import {
   ConversationStatus,
-  ConversationTokenResult,
   ConversationType,
 } from "@/shared/types/data/conversation.type";
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
@@ -8,8 +7,11 @@ import { ConversationContext } from "@/states/partial/conversation/ConversationC
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import {
+  determineStrategy,
   initialAIMessage,
   promptAgentTemplate,
+  promptStrategy,
+  summurizeStrategy,
 } from "@/shared/constants/agent";
 import {
   AIMessage,
@@ -17,7 +19,6 @@ import {
   SystemMessage,
 } from "@langchain/core/messages";
 import { BufferMemory } from "langchain/memory";
-import { handleGeneratePrompt } from "@/shared/lib/prompt";
 
 type Props = {
   children: ReactNode;
@@ -39,10 +40,9 @@ const ConversationProvider = ({ children }: Props) => {
   const [conversations, setConversations] = useState<ConversationType[]>([]);
   const [strategy, setStrategy] = useState<string>("");
   const [lastMessage, setLastMessage] = useState<ConversationType | null>(null);
-  const [tokenResult, setTokenResult] =
-    useState<ConversationTokenResult | null>(null);
   const [status, setStatus] = useState<ConversationStatus>("start");
   const [tokenGenerating, setTokenGenerating] = useState<boolean>(false);
+  const [token, setToken] = useState<string | undefined>(undefined);
   let content = "";
 
   useEffect(() => {
@@ -54,7 +54,8 @@ const ConversationProvider = ({ children }: Props) => {
     const getLLMResponse = async (userPrompt: string) => {
       const prompt = ChatPromptTemplate.fromMessages([
         new SystemMessage(promptAgentTemplate),
-        new AIMessage(initialAIMessage),
+        new SystemMessage(initialAIMessage),
+        new AIMessage(promptStrategy),
         ...(messages as any),
         new HumanMessage(userPrompt),
       ]);
@@ -85,24 +86,30 @@ const ConversationProvider = ({ children }: Props) => {
         });
       }
 
-      if (content.includes("confirm")) {
+      const determiner = ChatPromptTemplate.fromMessages([
+        new SystemMessage(determineStrategy),
+        new AIMessage(content),
+      ]);
+
+      const score = await determiner.pipe(model).invoke({ prompt: content });
+
+      if (score.content === "1") {
+        const prompt = ChatPromptTemplate.fromMessages([
+          new SystemMessage(summurizeStrategy),
+          new HumanMessage(content),
+        ]);
+
+        const chain = prompt.pipe(model);
+        const result = await chain.invoke({ prompt: content });
+
+        setStrategy(result.content as string);
         setLastMessage({
           type: "assistant",
           content: content,
           handler: {
             name: "confirm",
             onClick: async () => {
-              setIsGenerating(true);
-              setTokenGenerating(true);
-              const token = (await handleGeneratePrompt(
-                content
-              )) as ConversationTokenResult;
-              setTokenGenerating(false);
-              setIsGenerating(false);
-              setTokenResult({
-                ...token,
-              });
-              setStatus("end");
+              setStatus("confirm");
             },
           },
         });
@@ -134,9 +141,9 @@ const ConversationProvider = ({ children }: Props) => {
       setLastMessage,
       status,
       setStatus,
-      tokenResult,
-      setTokenResult,
       tokenGenerating,
+      token,
+      setToken,
     };
   }, [
     input,
@@ -146,7 +153,7 @@ const ConversationProvider = ({ children }: Props) => {
     lastMessage,
     content,
     status,
-    tokenResult,
+    token,
     tokenGenerating,
   ]);
   return (

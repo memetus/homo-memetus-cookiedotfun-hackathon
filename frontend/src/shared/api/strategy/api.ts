@@ -1,4 +1,4 @@
-import { API_RESPONSE_CODE } from '@/shared/constants/api';
+import { API_RESPONSE_CODE } from "@/shared/constants/api";
 import {
   PromptUsedCountPrarams,
   StrategyCreateParams,
@@ -6,16 +6,16 @@ import {
   StrategyParams,
   StrategyResponse,
   TokenRecommendationParams,
-} from '@/shared/types/data/api.type';
-import axios from 'axios';
-import { getCookie } from 'cookies-next';
+} from "@/shared/types/data/api.type";
+import axios from "axios";
+import { getCookie } from "cookies-next";
 
 export const createStrategy = async (
-  params: StrategyCreateParams,
+  params: StrategyCreateParams
 ): Promise<StrategyCreateResponse | Error> => {
   try {
     const response = await axios.post(
-      '/api/strategy',
+      "/api/strategy",
       {
         contents: params.contents,
       },
@@ -23,16 +23,16 @@ export const createStrategy = async (
         headers: {
           Authorization: `Bearer ${params.accessToken}`,
         },
-      },
+      }
     );
 
     if (API_RESPONSE_CODE.POST === response.status) {
       return response.data;
     }
 
-    throw new Error('Failed to create strategy');
+    throw new Error("Failed to create strategy");
   } catch (error) {
-    throw new Error((error as Error).message || 'Unexpected error occurred');
+    throw new Error((error as Error).message || "Unexpected error occurred");
   }
 };
 
@@ -42,14 +42,14 @@ export const fetchStrategy = async ({
 }: StrategyParams): Promise<StrategyResponse | Error> => {
   try {
     const response = await axios.get(
-      `/api/strategy/all?page=${page}&pageSize=${limit}`,
+      `/api/strategy/all?page=${page}&pageSize=${limit}`
     );
     if (API_RESPONSE_CODE.GET === response.status) {
       return response.data;
     }
-    return new Error('Failed to get strategy');
+    return new Error("Failed to get strategy");
   } catch (error) {
-    return new Error((error as Error).message || 'Unexpected error occurred');
+    return new Error((error as Error).message || "Unexpected error occurred");
   }
 };
 
@@ -59,7 +59,7 @@ export const getTokenRecommendation = async ({
 }: TokenRecommendationParams) => {
   try {
     const response = await axios.post(
-      '/prompt-gpt/post',
+      "/prompt-gpt/post",
       {
         prompt,
       },
@@ -67,14 +67,14 @@ export const getTokenRecommendation = async ({
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      },
+      }
     );
 
     if (API_RESPONSE_CODE.POST === response.status) {
       return response.data;
     }
   } catch (error) {
-    throw new Error((error as Error).message || 'Unexpected error occurred');
+    throw new Error((error as Error).message || "Unexpected error occurred");
   }
 };
 
@@ -83,7 +83,7 @@ export const getUsedCount = async (accessToken?: string) => {
     return null;
   }
   try {
-    const response = await axios.get('/prompt-gpt/prompt-number', {
+    const response = await axios.get("/api/send-ai/number-of-create-by-user", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -91,14 +91,14 @@ export const getUsedCount = async (accessToken?: string) => {
 
     return response.data;
   } catch (err) {
-    throw new Error((err as Error).message || 'Unexpected error occurred');
+    throw new Error((err as Error).message || "Unexpected error occurred");
   }
 };
 
 export const updateUseCount = async () => {
-  const accessToken = getCookie('accessToken');
+  const accessToken = getCookie("accessToken");
   try {
-    const response = await axios.get('/prompt-gpt/count', {
+    const response = await axios.get("/prompt-gpt/count", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -108,6 +108,6 @@ export const updateUseCount = async () => {
       return response.data;
     }
   } catch (err) {
-    throw new Error((err as Error).message || 'Unexpected error occurred');
+    throw new Error((err as Error).message || "Unexpected error occurred");
   }
 };

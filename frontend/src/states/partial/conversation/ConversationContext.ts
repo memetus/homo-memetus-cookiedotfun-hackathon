@@ -1,15 +1,14 @@
 import {
   ConversationStatus,
-  ConversationTokenResult,
   ConversationType,
-} from '@/shared/types/data/conversation.type';
+} from "@/shared/types/data/conversation.type";
 import {
   Context,
   Dispatch,
   createContext,
   SetStateAction,
   useContext,
-} from 'react';
+} from "react";
 
 export type ConversationContextShape = {
   input: string;
@@ -24,27 +23,27 @@ export type ConversationContextShape = {
   setLastMessage: Dispatch<SetStateAction<ConversationType | null>>;
   status: ConversationStatus;
   setStatus: Dispatch<SetStateAction<ConversationStatus>>;
-  tokenResult: ConversationTokenResult | null;
-  setTokenResult: Dispatch<SetStateAction<ConversationTokenResult | null>>;
   tokenGenerating: boolean;
+  token: string | undefined;
+  setToken: Dispatch<SetStateAction<string | undefined>>;
 };
 
 const defaultValue: ConversationContextShape = {
-  input: '',
+  input: "",
   setInput: () => {},
   conversations: [],
   setConversations: () => {},
-  strategy: '',
+  strategy: "",
   setStrategy: () => {},
   isLoading: false,
   setIsLoading: () => {},
   lastMessage: null,
   setLastMessage: () => {},
-  status: 'start',
+  status: "start",
   setStatus: () => {},
-  tokenResult: null,
-  setTokenResult: () => {},
   tokenGenerating: false,
+  token: undefined,
+  setToken: () => {},
 };
 
 export const ConversationContext: Context<ConversationContextShape> =

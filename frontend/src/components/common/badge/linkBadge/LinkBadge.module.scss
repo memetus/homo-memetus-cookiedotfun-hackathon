@@ -1,0 +1,28 @@
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  .badge-text {
+    font-size: 1.2rem;
+    color: var(--DYNAMIC);
+    font-family: var(--FONT-FRAGMENT-MONO);
+  }
+
+  .icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    fill: var(--DYNAMIC);
+  }
+
+  &.disabled {
+    .badge-text {
+      color: var(--DYNAMIC-OPACITY-5);
+    }
+
+    .icon {
+      fill: var(--DYNAMIC-OPACITY-5);
+    }
+  }
+}

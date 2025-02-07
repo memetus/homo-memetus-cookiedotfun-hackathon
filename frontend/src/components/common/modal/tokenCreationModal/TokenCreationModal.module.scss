@@ -1,0 +1,213 @@
+.modal-container {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999999999999999999;
+
+  .first-inner {
+    width: 50%;
+    min-height: 50%;
+    border-radius: 1rem;
+    background-color: #3a3a3a;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    .modal-title {
+      font-size: 2.8rem;
+      font-family: var(--FONT-TANKER);
+      color: var(--DYNAMIC);
+      margin-top: 4rem;
+      margin-bottom: 2rem;
+    }
+
+    .modal-text {
+      width: 90%;
+      margin: 0.5rem auto 0 auto;
+      font-size: 1.3rem;
+      font-family: Arial;
+      color: var(--DYNAMIC);
+      text-align: center;
+      font-family: var(--FONT-FRAGMENT-MONO);
+
+      .modal-text-link {
+        text-decoration: underline;
+        padding-left: 1rem;
+      }
+    }
+
+    .future-update {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      margin-top: 2rem;
+
+      .future-update-title {
+        font-size: 1.3rem;
+        font-family: var(--FONT-FRAGMENT-MONO);
+        text-align: center;
+        color: var(--DYNAMIC);
+      }
+
+      .text-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        margin-top: 0.5rem;
+
+        .text-ul {
+          font-size: 1.2rem;
+          font-family: var(--FONT-FRAGMENT-MONO);
+          color: var(--DYNAMIC);
+          text-align: center;
+          line-height: 1.6rem;
+        }
+      }
+    }
+
+    .check-text {
+      font-family: var(--FONT-TANKER);
+      font-size: 1.6rem;
+      color: var(--DYNAMIC);
+      margin-top: 2rem;
+    }
+
+    .button {
+      padding: 0.5rem 2rem;
+      background-color: var(--DYNAMIC);
+      color: var(--CONSTANT);
+      gap: 1rem;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-family: var(--FONT-FRAGMENT-MONO);
+      margin-top: 3rem;
+
+      .icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        fill: var(--CONSTANT);
+      }
+    }
+  }
+
+  .second-inner {
+    width: 50%;
+    border-radius: 1rem;
+    background-color: #3a3a3a;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    .modal-title {
+      font-size: 2.8rem;
+      font-family: var(--FONT-TANKER);
+      color: var(--DYNAMIC);
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .modal-text {
+      width: 90%;
+      margin: 0.5rem auto 0 auto;
+      font-size: 1.3rem;
+      font-family: Arial;
+      color: var(--DYNAMIC);
+      text-align: center;
+      font-family: var(--FONT-FRAGMENT-MONO);
+    }
+
+    .modal-dashboard {
+      width: 90%;
+      margin: 1.5rem auto 0 auto;
+      font-size: 1.3rem;
+      font-family: Arial;
+      color: var(--DYNAMIC);
+      text-align: center;
+      font-family: var(--FONT-FRAGMENT-MONO);
+    }
+
+    .ca-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+
+      .ca-text {
+        text-align: center;
+        font-size: 1.5rem;
+        color: var(--DYNAMIC-OPACITY-9);
+        font-family: var(--FONT-FRAGMENT-MONO);
+      }
+
+      .ca-address {
+        text-align: center;
+        font-size: 1.5rem;
+        color: var(--DYNAMIC);
+        font-family: var(--FONT-CONSOLAS);
+        position: relative;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .copy-button {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translate(150%, -50%);
+          width: 1.5rem;
+          height: 1.5rem;
+          outline: none;
+          border: none;
+          background-color: transparent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .copy-button-icon {
+            width: 1.3rem;
+            height: 1.3rem;
+            stroke: var(--DYNAMIC-OPACITY-6);
+            stroke-width: 1;
+          }
+
+          &:hover {
+            .copy-button-icon {
+              stroke: var(--DYNAMIC-OPACITY-9);
+            }
+          }
+        }
+      }
+    }
+    .button {
+      padding: 0.5rem 2rem;
+      background-color: var(--DYNAMIC);
+      color: var(--CONSTANT);
+      gap: 1rem;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-family: var(--FONT-FRAGMENT-MONO);
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+    }
+  }
+}
