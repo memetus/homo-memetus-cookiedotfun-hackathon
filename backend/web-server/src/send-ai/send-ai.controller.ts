@@ -30,4 +30,11 @@ export class SendAiController {
     const symbol = createFundDto.symbol;
     return this.sendAiService.deployAgentToken(symbol, symbol);
   }
+
+  @ApiBearerAuth()
+  @Post('test-create-token/create-amm')
+  deployTokenAndAMM(@Body() createFundDto: CreateFundDto) {
+    const symbol = createFundDto.symbol;
+    return this.sendAiService.deployTokenAndAMM(symbol, symbol);
+  }
 }
