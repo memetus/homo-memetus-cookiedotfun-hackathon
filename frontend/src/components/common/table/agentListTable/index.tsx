@@ -27,7 +27,7 @@ const AgentListTable = () => {
   const [sort, setSort] = useState<AgentSortType>("totalPnL");
   const [page, setPage] = useState<number>(1);
   const { data, isLoading } = useQuery({
-    queryKey: [QUERY_KEY.GET_ALL_AGENT, sort, sortOrder],
+    queryKey: [QUERY_KEY.GET_ALL_AGENT, page, sort, sortOrder],
     queryFn: () => getAllAgents({ page, pageSize: 14, sort, sortOrder }),
     staleTime: 1000 * 60 * 5,
   });
