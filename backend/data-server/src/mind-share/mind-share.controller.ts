@@ -22,7 +22,7 @@ export class MindShareController {
     return this.mindShareService.getAgentByContract(contractAddress);
   }
 
-  @Get('search/cookie-token-utility')
+  @Get('search/tweets')
   async searchTweets(@Query('searchQuery') searchQuery: string) {
     return this.mindShareService.searchTweets(searchQuery);
   }
