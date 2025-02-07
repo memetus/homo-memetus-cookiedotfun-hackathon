@@ -9,6 +9,8 @@ import { Model } from 'mongoose';
 import { FundData } from 'src/common/schemas/fund-data.schema';
 import { ConfigService } from '@nestjs/config';
 import { Users } from 'src/common/schemas/users.schema';
+import { PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
 
 @Injectable()
 export class SendAiService {
@@ -108,7 +110,7 @@ export class SendAiService {
       initialSupply: 100_000_000,
     };
 
-    const result = await agent.deployToken(
+    const tokenA = await agent.deployToken(
       tokenMetadata.name,
       tokenMetadata.uri,
       tokenMetadata.symbol,
@@ -116,7 +118,23 @@ export class SendAiService {
       tokenMetadata.initialSupply,
     );
 
-    return result.mint.toString();
+    const tokenAPublicKey = new PublicKey(tokenA);
+
+    const solPublicKey = new PublicKey(
+      'So11111111111111111111111111111111111111112',
+    );
+
+    // 3. Raydium AMM 풀 생성
+    const result = await agent.raydiumCreateAmmV4(
+      tokenAPublicKey,
+      new BN('1000000000'), // baseAmount
+      new BN('1000000000'), // quoteAmount
+      new BN('0'), // slippage
+    );
+
+    console.log('Raydium AMM Pool Created:', result);
+
+    return tokenA;
   }
 
   async getNumberOfCreateByUser(userId: string) {
