@@ -12,6 +12,9 @@ export class FundData {
   symbol: string;
 
   @Prop()
+  userWallet: string;
+
+  @Prop()
   address: string;
 
   @Prop()
